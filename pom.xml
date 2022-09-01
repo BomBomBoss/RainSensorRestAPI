@@ -40,8 +40,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-=======
         <!-- https://mvnrepository.com/artifact/org.modelmapper/modelmapper -->
         <dependency>
             <groupId>org.modelmapper</groupId>
@@ -49,7 +47,6 @@
             <version>3.1.0</version>
         </dependency>
 
->>>>>>> ebaf21a (Sensor DTO Validation added)
     </dependencies>
 
     <build>
