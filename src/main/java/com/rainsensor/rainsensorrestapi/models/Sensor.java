@@ -1,12 +1,15 @@
 package com.rainsensor.rainsensorrestapi.models;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "Sensor")
-public class Sensor {
+public class Sensor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +20,9 @@ public class Sensor {
     @NotEmpty(message = "Please enter sensor's name")
     @Size(min = 3, max = 30, message = "Sensor's name should be between 3 and 30 letters")
     private String name;
+
+    @OneToMany(mappedBy = "sensor")
+    private List<Measurements> measurementsList;
 
     public Sensor() {
     }
@@ -39,5 +45,13 @@ public class Sensor {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Measurements> getMeasurementsList() {
+        return measurementsList;
+    }
+
+    public void setMeasurementsList(List<Measurements> measurementsList) {
+        this.measurementsList = measurementsList;
     }
 }
