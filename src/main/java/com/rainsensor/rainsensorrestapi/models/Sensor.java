@@ -1,6 +1,8 @@
 package com.rainsensor.rainsensorrestapi.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -22,6 +24,7 @@ public class Sensor implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "sensor")
+    @JsonIgnore
     private List<Measurements> measurementsList;
 
     public Sensor() {
@@ -54,4 +57,6 @@ public class Sensor implements Serializable {
     public void setMeasurementsList(List<Measurements> measurementsList) {
         this.measurementsList = measurementsList;
     }
+
+
 }

@@ -25,4 +25,6 @@ public class SensorDTO {
 
     public SensorDTO() {
     }
+
+
 }

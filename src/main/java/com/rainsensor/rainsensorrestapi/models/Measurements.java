@@ -2,9 +2,11 @@ package com.rainsensor.rainsensorrestapi.models;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Entity
@@ -16,14 +18,25 @@ public class Measurements {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "value")
-    @Min(value = -100, message = "Temperature should be between -100 and 100")
-    @Max(value = 100, message = "Temperature should be between -100 and 100")
+    @Column(name = "value",scale = 1, precision = 4)
+    @NotNull(message = "Please enter value")
+    @Range(min = -100, max = 100, message = "Temperature should be between -100 and 100")
     private double value;
 
     @Column(name = "raining")
     @NotNull(message = "please note raining status")
     private boolean raining;
+
+    @Column(name= "measurement_time")
+    private LocalDateTime localDateTime;
+
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -34,7 +47,7 @@ public class Measurements {
     public Measurements() {
     }
 
-    public Measurements(int value, boolean raining, Sensor sensor) {
+    public Measurements(double value, boolean raining, Sensor sensor) {
         this.value = value;
         this.raining = raining;
         this.sensor = sensor;
@@ -70,6 +83,7 @@ public class Measurements {
 
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
-        sensor.setMeasurementsList(Collections.singletonList(this));
+//        sensor.setMeasurementsList(Collections.singletonList(this));
     }
+
 }
