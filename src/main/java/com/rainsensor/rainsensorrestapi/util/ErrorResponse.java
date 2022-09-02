@@ -1,5 +1,6 @@
 package com.rainsensor.rainsensorrestapi.util;
 
+//to create error message in exceptions
 public class ErrorResponse {
 
     private String message;

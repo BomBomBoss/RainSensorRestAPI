@@ -1,6 +1,7 @@
 package com.rainsensor.rainsensorrestapi.controllers;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.rainsensor.rainsensorrestapi.DTO.MeasurementResponse;
 import com.rainsensor.rainsensorrestapi.DTO.MeasurementsDTO;
 import com.rainsensor.rainsensorrestapi.models.Measurements;
 import com.rainsensor.rainsensorrestapi.models.Sensor;
@@ -18,7 +19,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/measurements")
@@ -26,22 +30,33 @@ public class MeasurementsController {
 
     private final MeasurementsService measurementsService;
     private final MeasurementsValidator measurementsValidator;
-    private final SensorService sensorService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public MeasurementsController(MeasurementsService measurementsService, MeasurementsValidator measurementsValidator, SensorService sensorService, ModelMapper modelMapper) {
+    public MeasurementsController(MeasurementsService measurementsService, MeasurementsValidator measurementsValidator, ModelMapper modelMapper) {
         this.measurementsService = measurementsService;
         this.measurementsValidator = measurementsValidator;
-        this.sensorService = sensorService;
         this.modelMapper = modelMapper;
+    }
+
+    @GetMapping()
+    public MeasurementResponse showAllMeasurements(){
+        return new MeasurementResponse((measurementsService.findAll().stream()
+                .map(this::convertToMeasurementsDTO).collect(Collectors.toList())));
+    }
+
+    @GetMapping("/rainyDaysCount")
+    public int showRainyDays(){
+        return measurementsService.findRainyDays(true).size();
+
     }
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addMeasurement(@RequestBody @Valid MeasurementsDTO measurementsDTO,
                                                      BindingResult bindingResult){
 
-        measurementsValidator.validate(convertToMeasurements(measurementsDTO), bindingResult);
+        Measurements measurements = convertToMeasurements(measurementsDTO);
+        measurementsValidator.validate(measurements, bindingResult);
         if(bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
             List<FieldError> errorList = bindingResult.getFieldErrors();
@@ -50,9 +65,6 @@ public class MeasurementsController {
             }
             throw new SensorNotFoundException(errorMsg.toString());
         }
-        Measurements measurements = convertToMeasurements(measurementsDTO);
-        Sensor sensor = sensorService.findByName(measurements.getSensor().getName());
-        measurements.setSensor(sensor);
         measurementsService.saveMeasurement(measurements);
         return ResponseEntity.ok(HttpStatus.ACCEPTED);
     }

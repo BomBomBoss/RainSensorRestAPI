@@ -5,6 +5,7 @@ import com.rainsensor.rainsensorrestapi.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import javax.persistence.Column;
@@ -28,7 +29,7 @@ public class MeasurementsValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Measurements measurements = (Measurements) target;
         if(sensorService.findByName(measurements.getSensor().getName())==null){
-            errors.rejectValue("sensor","", "This sensor doesn't exists");
+            errors.rejectValue("sensor","", "This sensor doesn't exist");
         }
     }
 }
